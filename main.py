@@ -1,42 +1,47 @@
-# import the client
+from transformers import AutoTokenizer, AutoModel
+import torch
 from pycozo.client import Client
+import numpy as np
 
-# create a client
+tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
+
+def embedding(text):
+  inputs = tokenizer(text, return_tensors='pt', truncation=True, max_length=512)
+  with torch.no_grad():
+    vectors = model(**inputs)
+  return vectors.last_hidden_state.mean(dim=1).numpy()
+
+data_code = [
+  [1, 'print("#i like to comment!!!")', embedding('print("#i like to comment!!!")').tolist()],
+  [2, 'n = int(input("pls enter a number."))', embedding('n = int(input("pls enter a number."))').tolist()],
+  [3, 'x = 5', embedding('x = 5').tolist()]
+]
+
+data_explanations = [
+  [1, 'prints a new line', embedding('prints a new line').tolist()],
+  [2, 'takes input from user', embedding('takes input from user').tolist()],
+  [3, 'assigns 5 to x', embedding('assigns 5 to x').tolist()]
+]
+
 client = Client()
 
-# can add comments at the end of the line. this is not implemented in the parser, but i am stripping them out before sending to the parser
-# script = """
-# a[x, y] <- [[1, 2], [3, 4]]
-# b[y, z] <- [[2, 3], [2, 4]]
-# """
+script = f"""
+code[code, code_vec] <- {data_code}
+explanation[explanation, explanation_vec] <- {data_explanations}
 
-script = """
-code[id, code] <- [[1, 'print()'], [2, 'input()'], [3, 'x = 5']]
-explanation[id, explanation] <- [[1, 'prints a new line'], [2, 'takes input from user'], [3, 'assigns 5 to x']]
-
-?[code_snippet, description] := code[id, code_snippet], explanation[id, description]
+?[id, nearest_explanation] := 
+    code[id, code, code_vec],
+    explanation[e_id, e_desc, explanation_vec],
+    min(l2_dist(code_vec, explanation_vec)) <= 0.7,
+    nearest_explanation = e_desc
 """
 
-# temporary variable to store the script
-sc = ''
-
-# remove comments
-for line in script.split('\n'):
-  sc += line.split('#')[0] + '\n'
-
-# remove leading and trailing whitespaces/newlines
-sc = sc.strip()
-
-# execute the script
-res = None
 try:
-  res = client.run(sc)
+  res = client.run(script)
+  if res:
+    print(res)
 except Exception as e:
-  res = None
-  raise(e)
+  print(f"An error occurred: {e}")
 finally:
   client.close()
-
-# print the result
-if 'res' in locals() and res is not None:
-  print(res)

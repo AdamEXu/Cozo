@@ -12,35 +12,41 @@ def embedding(text):
     vectors = model(**inputs)
   return vectors.last_hidden_state.mean(dim=1).numpy()
 
-data_code = [
-  [1, 'print("#i like to comment!!!")', embedding('print("#i like to comment!!!")').tolist()],
-  [2, 'n = int(input("pls enter a number."))', embedding('n = int(input("pls enter a number."))').tolist()],
-  [3, 'x = 5', embedding('x = 5').tolist()]
-]
+# data_code = [
+#   ['print("")', embedding('print("#i like to comment!!!")').tolist()],
+#   ['n = int(input("pls enter a number."))', embedding('n = int(input("pls enter a number."))').tolist()],
+#   ['x = 5', embedding('x = 5').tolist()]
+# ]
 
-data_explanations = [
-  [1, 'prints a new line', embedding('prints a new line').tolist()],
-  [2, 'takes input from user', embedding('takes input from user').tolist()],
-  [3, 'assigns 5 to x', embedding('assigns 5 to x').tolist()]
-]
+# data_documentation = [
+#   ['Prints a new line', embedding('Prints a new line').tolist()],
+#   ['Takes input from user', embedding('Takes input from user').tolist()],
+#   ['Assigns 5 to x', embedding('Assigns 5 to x').tolist()]
+# ]
+
+# data_explanations = [
+#   ['This is an empty print statement, which will result in a new line.', embedding('This is an empty print statement, which will result in a new line.').tolist()],
+#   ['This code takes an integer input from the user and assigns it to n.', embedding('This code takes an integer input from the user and assigns it to n.').tolist()],
+#   ['This code assigns the value 5 to x.', embedding('This code assigns the value 5 to x.').tolist()]
+# ]
+
+# data_ghcommits = [
+#   ['Added a print statement for better readability of output.', embedding('Added a print statement for better readability of output.').tolist()],
+#   ['Added an input statement so the user may specify the value of int n.', embedding('Added an input statement so the user may specify the value of int n.').tolist()],
+#   ['Changed the value of x to 5.', embedding('Changed the value of x to 5.').tolist()]
+# ]
 
 client = Client()
 
-script = f"""
-code[code, code_vec] <- {data_code}
-explanation[explanation, explanation_vec] <- {data_explanations}
+mycode = "print('Hello, World!')"
 
-?[id, nearest_explanation] := 
-    code[id, code, code_vec],
-    explanation[e_id, e_desc, explanation_vec],
-    min(l2_dist(code_vec, explanation_vec)) <= 0.7,
-    nearest_explanation = e_desc
+script = """
+?[thinga, thingb] <- [['thing1', 'thing2'], ['thing3', 'thing4']];
 """
 
 try:
   res = client.run(script)
-  if res:
-    print(res)
+  print(res)
 except Exception as e:
   print(f"An error occurred: {e}")
 finally:

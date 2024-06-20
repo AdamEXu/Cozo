@@ -27,6 +27,14 @@ def main():
     sum = step3(a, b)
     step4(sum)
 
+def sum_two_numbers_efficient(a, b):
+    if a == 0:
+        return b
+    elif b == 0:
+        return a
+    else:
+        return a + b
+
 if __name__ == "__main__":
     main()
     

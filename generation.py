@@ -32,8 +32,26 @@ Impact: Enhances efficiency and clarity, ensuring the function handles zero inpu
     model="gpt-3.5-turbo",
     messages=[
       {"role": "system", "content": system},
+      {"role": "user", "content": grounding_code},
+      {"role": "assistant", "content": grounding_exp},
       {"role": "user", "content": code}
     ],
     logit_bias={"1734": -10, "198": -10}
   )
   return response.choices[0].message.content
+
+if __name__ == "__main__":
+  print("Paste code and press Ctrl-D to finish.")
+  contents = []
+  while True:
+    try: 
+      line = input()
+    except EOFError:
+      break
+    contents.append(line)
+
+  code = "\n".join(contents)
+
+  explanation = generate_explanation(code)
+
+  print(explanation)

@@ -14,43 +14,22 @@ def embedding(text):
 
 from pycozo.client import Client
 
-# client = Client('sqlite', 'explanations.db', dataframe=False)
+client = Client('sqlite', 'explanations.db', dataframe=False)
 
-# script = """
-# ?[code, code_embedding, commit_message, llm_explanation] := *code_explanations[code, code_embedding, commit_message, llm_explanation]
-# """
+script = """
+?[code, code_embedding, commit_message, llm_explanation] := *code_explanations[code, code_embedding, commit_message, llm_explanation]
+"""
 
-# try:
-#   res = client.run(script)['rows']
-#   # print(res)
-# except Exception as e:
-#   print(f"An error occurred: {e}")
+try:
+  res = client.run(script)['rows']
+  # print(res)
+except Exception as e:
+  print(f"An error occurred: {e}")
 
-# client.close()
+client.close()
 
-res = [
-  ['abcd', embedding('abcd')],
-  ['abce', embedding('abce')],
-  ['1234', embedding('1234')],
-  ['1235', embedding('1235')],
-  ['1236', embedding('1236')],
-  ['1237', embedding('1237')],
-  ['cbda', embedding('cbda')],
-  ['foobar', embedding('foobar')],
-  ['foobarr', embedding('foobarr')],
-  ['foo', embedding('foo')],
-  ['quilt', embedding('quilt')],
-  ['mattress', embedding('mattress')],
-  ['pillow', embedding('pillow')],
-  ['blanket', embedding('blanket')],
-  ['hello', embedding('hello')],
-  ['hi', embedding('hi')],
-  ['hey', embedding('hey')],
-  ['apple', embedding('apple')],
-  ['banana', embedding('banana')],
-  ['orange', embedding('orange')],
-  ['grape', embedding('grape')]
-]
+# res = [
+# ]
 
 df = []
 
@@ -71,7 +50,7 @@ def tsne_perplexity(matrix, n):
   plt.scatter(vis_dims[:, 0], vis_dims[:, 1])
   for label, x, y in zip(res, vis_dims[:, 0], vis_dims[:, 1]):
     plt.annotate(label[0], xy=(x, y), xytext=(0, 0), textcoords='offset points')
-  # plt.annotate(res[-1][0], xy=(vis_dims[-1, 0], vis_dims[-1, 1]), xytext=(0, 0), textcoords='offset points', color='red')
+  plt.annotate(res[-1][0], xy=(vis_dims[-1, 0], vis_dims[-1, 1]), xytext=(0, 0), textcoords='offset points', color='red')
 
   plt.savefig(f'tsne_perplexity_test/tsne_perplexity_{str(n)}.png')
   plt.close()

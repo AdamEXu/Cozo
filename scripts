@@ -1,0 +1,32 @@
+.navbaritem img {
+  height: 32px;
+  width: 32px;
+  -webkit-filter: invert(1);
+  filter: invert(1);
+}
+
+@media only screen and (min-width: 620px) {
+  .navbaritem img {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 620px) {
+  #dashboard, #newthread {
+    display: none;
+  }
+
+  .navbaritem img {
+    height: 32px;
+    width: 32px;
+    display: inline;
+  }
+}
+def sum_two_numbers_efficient(a, b):
+    if a == 0:
+        return b
+    elif b == 0:
+        return a
+    else:
+        return a + b
+for i in range(10): print(i) print(i) print(i) print(i)

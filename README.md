@@ -1,6 +1,15 @@
 # CozoDB Visualization for Code Changes
+This is a vector search and visualization tool for code changes from GitHub commits. It is built on top of CozoDB, and uses sentence-transformers to generate 384-dimensional embeddings for code changes. You can then search for similar code changes to a given code change, and visualize the code changes in a 2D space using t-SNE and MatPlotLib.
+
+There are three components: Data Preparation, Visualization, and Vector Search.
 
 ## Data Preparation
+First, you will need to prepare the `explanations.db` file. By running `schema.py`, the script will create the `explanations.db` file with the necessary schema.
+
+```bash
+python schema.py
+```
+
 Data should be inserted into the `data.json` JSON file. The JSON file should contain a list of dictionaries, where each dictionary represents a data point. Each dictionary should contain the following keys:
 - `code`: The code change for the data point in diff format.
 - `repo`: The repository the code change belongs to.

@@ -1,5 +1,5 @@
-# User defined files
-tsne_perplexity_test
+# Temporary files
+_temp/
 
 # Databases
 *.db

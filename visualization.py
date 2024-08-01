@@ -52,9 +52,8 @@ def tsne_perplexity(matrix, n):
     plt.annotate(label[0], xy=(x, y), xytext=(0, 0), textcoords='offset points')
   plt.annotate(res[-1][0], xy=(vis_dims[-1, 0], vis_dims[-1, 1]), xytext=(0, 0), textcoords='offset points', color='red')
 
-  plt.savefig(f'tsne_perplexity_test/tsne_perplexity_{str(n)}.png')
+  plt.savefig(f'visualizations/visualization_perplexity_{str(n)}.png')
   plt.close()
-  # plt.show()
 
-for i in range(1, 51):
+for i in range(1, 100):
   tsne_perplexity(matrix, i/2)

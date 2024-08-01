@@ -3,6 +3,14 @@ This is a vector search and visualization tool for code changes from GitHub comm
 
 There are three components: Data Preparation, Visualization, and Vector Search.
 
+But first, install all nescessary dependencies from the `requirements.txt` file.
+
+```bash
+python -m pip install -r requirements.txt
+```
+
+Once you have installed the dependencies, you can proceed to the Data Preparation section.
+
 ## Data Preparation
 First, you will need to prepare the `explanations.db` file. By running `schema.py`, the script will create the `explanations.db` file with the necessary schema.
 
@@ -10,7 +18,7 @@ First, you will need to prepare the `explanations.db` file. By running `schema.p
 python schema.py
 ```
 
-Data should be inserted into the `data.json` JSON file. The JSON file should contain a list of dictionaries, where each dictionary represents a data point. Each dictionary should contain the following keys:
+Once the database is initialized, you can insert the data. Data should be populated into the `data.json` JSON file. The JSON file should contain a list of dictionaries, where each dictionary represents a data point. Each dictionary should contain the following keys:
 - `code`: The code change for the data point in diff format.
 - `repo`: The repository the code change belongs to.
 - `commit_id`: The commit ID of the code change.

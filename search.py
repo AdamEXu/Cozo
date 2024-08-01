@@ -26,47 +26,25 @@ script = """
 :insert code_explanations
 """
 
+try:
+  res = client.run(script)
+  print(res)
+except Exception as e:
+  print(f"An error occurred: {e}")
+
+# script = """
+# ?[code, code_embedding, commit_message, llm_explanation] := ~code_explanations:index{ code, code_embedding, commit_message, llm_explanation |
+#       query: q,
+#       k: 2,
+#       ef: 2000,
+#       radius: 1
+#   }, q = vec(""" + str(embedding(new_explanation)) + """)
+# """
+
 # try:
 #   res = client.run(script)
 #   print(res)
 # except Exception as e:
 #   print(f"An error occurred: {e}")
-
-script = """
-::hnsw create code_explanations:index {
-    dim: 384,
-    m: 50,
-    dtype: F32,
-    fields: [code_embedding],
-    distance: L2,
-    ef_construction: 20,
-    extend_candidates: false,
-    keep_pruned_connections: false,
-}
-"""
-
-try:
-  res = client.run(script)
-  print(res)
-except Exception as e:
-  print(f"An error occurred: {e}")
-
-script = """
-?[code, code_embedding, commit_message, llm_explanation] := ~code_explanations:index{ code, code_embedding, commit_message, llm_explanation |
-      query: q,
-      k: 2,
-      ef: 2000,
-      radius: 1
-  }, q = vec(""" + str(embedding(new_explanation)) + """)
-"""
-
-# print(script)
-
-# run the script
-try:
-  res = client.run(script)
-  print(res)
-except Exception as e:
-  print(f"An error occurred: {e}")
 
 client.close()

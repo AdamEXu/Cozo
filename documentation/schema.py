@@ -6,11 +6,14 @@ import numpy as np
 client = Client('sqlite', 'explanations.db')
 
 script = """
-:create code_explanations {
+:create documentation_explanations {
   code: String,
   =>
   code_embedding: <F32; 384>,
   commit_message: String,
+  language: String,
+  documentation: String,
+  documentation_url: String,
   llm_explanation: String,
 }
 """
@@ -22,7 +25,7 @@ except Exception as e:
   print(f"An error occurred: {e}")
 
 script = """
-::hnsw create code_explanations:index {
+::hnsw create documentation_explanations:index {
     dim: 384,
     m: 50,
     dtype: F32,

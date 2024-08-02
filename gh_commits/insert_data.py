@@ -16,7 +16,7 @@ def embedding(text):
 client = Client('sqlite', 'explanations.db')
 
 import json
-with open('data.json', 'r') as f:
+with open('gh_data.json', 'r') as f:
   code_explanations = json.load(f)
 
 code_explanation = []
@@ -26,7 +26,7 @@ for i in range(len(code_explanations)):
 script = """
 ?[code, code_embedding, commit_message, llm_explanation] <- """ + str(code_explanation) + """
 
-:insert code_explanations
+:insert gh_explanations
 """
 
 print(script)
@@ -38,7 +38,7 @@ except Exception as e:
   print(f"An error occurred: {e}")
 
 script = """
-?[code, code_embedding, commit_message, llm_explanation] := *code_explanations[code, code_embedding, commit_message, llm_explanation]
+?[code, code_embedding, commit_message, llm_explanation] := *gh_explanations[code, code_embedding, commit_message, llm_explanation]
 """
 
 try:

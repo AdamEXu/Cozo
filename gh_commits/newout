@@ -1,0 +1,157 @@
+[7, 4, 5, 6, 3]
+@@ -67,6 +67,8 @@ export const handleDocumentAnalyze = async (\n  const verifiedResponse = verifyResponseOfSubmit(response);\n  if (!verifiedResponse || !verifiedResponse.results) {\n    if (!suppressRateLimitErrors) {\n+      vscode.window.showErrorMessage(CONSTANTS.analyzeCommandTimeoutMessage);\n+    }\n    getExtensionEventEmitter().fire({\n      type: 'Analysis_Error',\n      data: '',\n@@ -77,8 +79,6 @@ export const handleDocumentAnalyze = async (\n        name: currentWorkSpaceFolder,\n      },\n    });\n-      vscode.window.showErrorMessage(CONSTANTS.analyzeCommandTimeoutMessage);\n-    }\n\n    return failedResponseReturn;\n  } else if (verifiedResponse.status === 'failed') {\n@@ -121,7 +121,20 @@ export const handleDocumentAnalyze = async (\n\n  // convert problem paths to absolute path and normalize them\n  const workspaceFolderPath = vscode.workspace.workspaceFolders?.[0].uri.fsPath;\n-  if (!workspaceFolderPath) {return failedResponseReturn;}\n+  if (!workspaceFolderPath) {\n+    getExtensionEventEmitter().fire({\n+      type: 'Analysis_Error',\n+      data: '',\n+    });\n+    getExtensionEventEmitter().fire({\n+      type: 'CURRENT_PROJECT',\n+      data: {\n+        name: currentWorkSpaceFolder,\n+      },\n+    });\n+\n+    return failedResponseReturn;\n+  }\n  verifiedResponse.results.forEach(result => {\n    result.path = path.join(workspaceFolderPath, result.path);\n  });
+
+
+
+
+@@ -342,7 +342,7 @@\nangular.module('coala')\n                        total_projects = $scope.projectList.length\n                        angular.forEach($scope.projectList, function (value, key) {\n-                            if ($scope.currentProject.name == value['name']) {\n+                            if ($scope.currentProject.path == value['path']) {\n                                current_project_index = key\n                            }\n                        });\n@@ -366,9 +366,6 @@ angular.module('coala')\n\n                $scope.projectRequest = function () {\n\n-                    var redirectTo = {\n-                        'integrate_pyflakes-enhanced_ast_into_coala_': 'integrate_pyflakes-enhanced_ast_into_coala'\n-                    };\n                    $scope.projects_url_dict = {}\n                    $scope.projects_url_list = Object.keys($scope.projects_url_dict);\n                    angular.forEach($scope.projectList, function (value, key) {\n@@ -378,17 +375,14 @@ angular.module('coala')\n                        $scope.projects_url_dict[value['url']] = key\n                    });\n\n-                    $scope.sortProjects();\n-\n                    var project_requested = encodeURIComponent($location.search().project);\n                    if (project_requested) {\n-                        if (project_requested in redirectTo) {\n-                            project_requested = redirectTo[project_requested]\n-                        }\n                        if (Object.keys($scope.projects_url_dict).indexOf(project_requested) > -1) {\n                            self.showProject($scope.projectList[$scope.projects_url_dict[project_requested]])\n                        }\n                    }\n+\n+                    $scope.sortProjects();\n                }\n\n                var search_requested = $location.search().q;
+
+
+
+
+@@ -377,32 +377,33 @@
+def parse_datetime_string_with_reso(
+        raise ValueError(f'Given date string '{date_string}' not likely a datetime')
+
+-    # Try iso8601 first, as it handles nanoseconds
+-    string_to_dts_failed = string_to_dts(
+-        date_string, &dts, &out_bestunit, &out_local,
+-        &out_tzoffset, False
+-    )
+-    if not string_to_dts_failed:
+-        # Match Timestamp and drop picoseconds, femtoseconds, attoseconds
+-        # The new resolution will just be nano
+-        # GH#50417
+-        if out_bestunit in _timestamp_units:
+-            out_bestunit = NPY_DATETIMEUNIT.NPY_FR_ns
+-
+-        if out_bestunit == NPY_DATETIMEUNIT.NPY_FR_ns:
+-            # TODO: avoid circular import
+-            from pandas import Timestamp
+-            parsed = Timestamp(date_string)
+-        else:
+-            if out_local:
+-                tz = timezone(timedelta(minutes=out_tzoffset))
++    if not dayfirst:  # GH 58859
++        string_to_dts_failed = string_to_dts(
++            date_string, &dts, &out_bestunit, &out_local,
++            &out_tzoffset, False
++        )
++        if not string_to_dts_failed:
++            # Match Timestamp and drop picoseconds, femtoseconds, attoseconds
++            # The new resolution will just be nano
++            # GH#50417
++            if out_bestunit in _timestamp_units:
++                out_bestunit = NPY_DATETIMEUNIT.NPY_FR_ns
++
++            if out_bestunit == NPY_DATETIMEUNIT.NPY_FR_ns:
++                # TODO: avoid circular import
++                from pandas import Timestamp
++                parsed = Timestamp(date_string)
+            else:
+-                tz = None
+-            parsed = datetime_new(
+-                dts.year, dts.month, dts.day, dts.hour, dts.min, dts.sec, dts.us, tz
+-            )
++                if out_local:
++                    tz = timezone(timedelta(minutes=out_tzoffset))
++                else:
++                    tz = None
++                parsed = datetime_new(
++                    dts.year, dts.month, dts.day, dts.hour, dts.min, dts.sec, dts.us, tz
++                )
+
+-        reso = npy_unit_to_attrname[out_bestunit]
+-        return parsed, reso
++            reso = npy_unit_to_attrname[out_bestunit]
++            return parsed, reso
+
+    parsed = _parse_delimited_date(date_string, dayfirst, &out_bestunit)
+    if parsed is not None:
+
+
+
+
+@@ -606,37 +606,42 @@
+cdef _TSObject convert_str_to_tsobject(str ts, tzinfo tz,
+        # equiv: datetime.today().replace(tzinfo=tz)
+        return convert_datetime_to_tsobject(dt, tz, nanos=0, reso=NPY_FR_us)
+    else:
+-        string_to_dts_failed = string_to_dts(
+-            ts, &dts, &out_bestunit, &out_local,
+-            &out_tzoffset, False
+-        )
+-        if not string_to_dts_failed:
+-            reso = get_supported_reso(out_bestunit)
+-            check_dts_bounds(&dts, reso)
+-            obj = _TSObject()
+-            obj.dts = dts
+-            obj.creso = reso
+-            ival = npy_datetimestruct_to_datetime(reso, &dts)
+-
+-            if out_local == 1:
+-                obj.tzinfo = timezone(timedelta(minutes=out_tzoffset))
+-                obj.value = tz_localize_to_utc_single(
+-                    ival, obj.tzinfo, ambiguous='raise', nonexistent=None, creso=reso
+-                )
+-                if tz is None:
+-                    check_overflows(obj, reso)
+-                    return obj
+-                _adjust_tsobject_tz_using_offset(obj, tz)
+-                return  obj
+-            else:
+-                if tz is not None:
+-                    # shift for _localize_tso
+-                    ival = tz_localize_to_utc_single(
+-                        ival, tz, ambiguous='raise', nonexistent=None, creso=reso
++        if not dayfirst:  # GH 58859
++            string_to_dts_failed = string_to_dts(
++                ts, &dts, &out_bestunit, &out_local,
++                &out_tzoffset, False
++            )
++            if not string_to_dts_failed:
++                reso = get_supported_reso(out_bestunit)
++                check_dts_bounds(&dts, reso)
++                obj = _TSObject()
++                obj.dts = dts
++                obj.creso = reso
++                ival = npy_datetimestruct_to_datetime(reso, &dts)
++
++                if out_local == 1:
++                    obj.tzinfo = timezone(timedelta(minutes=out_tzoffset))
++                    obj.value = tz_localize_to_utc_single(
++                        ival,
++                        obj.tzinfo,
++                        ambiguous='raise',
++                        nonexistent=None,
++                        creso=reso,
+                    )
+-                obj.value = ival
+-                maybe_localize_tso(obj, tz, obj.creso)
+-                return obj
++                    if tz is None:
++                        check_overflows(obj, reso)
++                        return obj
++                    _adjust_tsobject_tz_using_offset(obj, tz)
++                    return  obj
++                else:
++                    if tz is not None:
++                        # shift for _localize_tso
++                        ival = tz_localize_to_utc_single(
++                            ival, tz, ambiguous='raise', nonexistent=None, creso=reso
++                        )
++                    obj.value = ival
++                    maybe_localize_tso(obj, tz, obj.creso)
++                    return obj
+
+        dt = parse_datetime_string(
+            ts,
+
+
+
+
+@@ -242,13 +242,12 @@ in-memory database. To override:\n%cozo_open <ENGINE>, <PATH>\n```\n\n-where `<ENGINE>` can now be `'sqlite'`, `'rocksdb'` or `'mem'`.\n+where `<ENGINE>` can now be `'http'`, `'sqlite'`, `'rocksdb'` or `'mem'`.\n\nTo connect to a standalone server, use\n\n```\n-%cozo_host http://<ADDRESS>:<PORT>\n-%cozo_auth <AUTH_STRING>\n+%cozo_open 'http', '', {'host': 'http://127.0.0.1:9070', 'auth': '<AUTH_STRING>'}\n```\n\nwhere `<AUTH_STRING>` is optional if `<ADDRESS>` is a loopback address.
+
+
+
+

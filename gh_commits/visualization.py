@@ -17,12 +17,11 @@ from pycozo.client import Client
 client = Client('sqlite', 'explanations.db', dataframe=False)
 
 script = """
-?[code, code_embedding, commit_message, llm_explanation] := *code_explanations[code, code_embedding, commit_message, llm_explanation]
+?[code, code_embedding, commit_message, llm_explanation] := *gh_explanations[code, code_embedding, commit_message, llm_explanation]
 """
 
 try:
   res = client.run(script)['rows']
-  # print(res)
 except Exception as e:
   print(f"An error occurred: {e}")
 

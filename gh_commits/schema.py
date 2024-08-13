@@ -1,5 +1,3 @@
-# :create table {k: String => v: <F32; 128>}
-
 from pycozo.client import Client
 import numpy as np
 
@@ -29,7 +27,7 @@ script = """
     fields: [code_embedding],
     distance: L2,
     ef_construction: 20,
-    extend_candidates: false,
+    extend_candidates: true,
     keep_pruned_connections: false,
 }
 """

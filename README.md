@@ -18,13 +18,20 @@ First, you will need to prepare the `explanations.db` file. By running `schema.p
 python schema.py
 ```
 
-Once the database is initialized, you can insert the data. Data should be populated into the `data.json` JSON file. The JSON file should contain a list of dictionaries, where each dictionary represents a data point. Each dictionary should contain the following keys:
+Once the database is initialized, you can insert the data. Data should be populated into the `gh_data.json` JSON file. The JSON file should contain a list of dictionaries, where each dictionary represents a data point. Each dictionary should contain the following keys:
 - `code`: The code change for the data point in diff format.
 - `repo`: The repository the code change belongs to.
 - `commit_id`: The commit ID of the code change.
 - `file`: The file the code change is from.
 - `commit_message`: The commit message for the code change.
-- `explanation`: An LLM generated explanation for the code change.
+- `llm_explanation`: An LLM generated explanation for the code change.
+
+Additionally, there is a `documentation_data.json` for documentation storage. The keys are similar but it should contain the following keys:
+- `code`: The code change for the data point in diff format.
+- `documentation`: Textual documentation for the code change surrounding the code change.
+- `documentation_url`: URL to the documentation for the code change.
+- `language`: The programming language of the code change.
+- `llm_explanation`: An LLM generated explanation for the code change.
 
 A sample dictionary is shown below:
 ```json
@@ -54,22 +61,23 @@ python visualization.py
 By running `visualization.py`, the script will generate a visualization for each perplexity value from 0.5 to 51.0 in increments of 0.5 into the `visualizations/` folder in the following format:
 
 ```
-visualization_perplexity_00.5.png
-visualization_perplexity_01.0.png
-visualization_perplexity_01.5.png
+visualization_perplexity_0.5.png
+visualization_perplexity_1.png
+visualization_perplexity_1.5.png
 ...
-visualization_perplexity_50.5.png
-visualization_perplexity_51.0.png
+visualization_perplexity_5.5.png
+visualization_perplexity_6.png
 ```
 
 The visualization will be a scatter plot of the t-SNE embeddings of the data points with labels containing the code change for each data point like the one shown below:
 ![A scatter plot containing points for each code change.](./readme_images/vis_perplexity_5.0.png)
 
 ## Vector Search
-To search for similar code changes to a given code change, run `search.py`. The script will prompt the user to input a code change in diff format. The script will then output the 5 most similar code changes to the input code change.
+To search for similar code changes to a given code change, run `search.py`. The script will prompt the user to input a code change in diff format. The script will then output the 3 most similar code changes to the input code change. As of now, the change to search for is hardcoded in the `gh_search.py` and `documentation_search.py` files.
 
 ```bash
-python search.py
+python gh_search.py
+python documentation_search.py
 ```
 
 It will also open a visualization of the code change in a separate window with perplexity=5, with the input code change highlighted in red, like the one shown below:

@@ -1,0 +1,37 @@
+[
+  {
+    "code": "import matplotlib.pyplot as plt\nimport numpy as np",
+    "language": "python",
+    "documentation": "# Quick start guide\nThis tutorial covers some basic usage patterns and best practices to help you get started with Matplotlib.",
+    "documentation_url": "https://matplotlib.org/stable/users/explain/quick_start.html#quick-start-guide",
+    "llm_explanation": "General Description: This change imports Matplotlib and NumPy, essential libraries for plotting and numerical operations in Python.\nReason for the Change: The change was made to prepare for data visualization and manipulation tasks.\nDescription of the Change: The code imports the `matplotlib.pyplot` and `numpy` modules.\nWhat was done in the Change: Added import statements for Matplotlib and NumPy at the beginning of the code.\nImportance of the Change: This change is important as it enables the use of plotting and numerical functions required for data analysis."
+  },
+  {
+    "code": "fig, ax = plt.subplots()             # Create a figure containing a single Axes.\nax.plot([1, 2, 3, 4], [1, 4, 2, 3])  # Plot some data on the Axes.\nplt.show()                           # Show the figure.",
+    "language": "python",
+    "documentation": "## A simple example\nMatplotlib graphs your data on [Figure](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure)s (e.g., windows, Jupyter widgets, etc.), each of which can contain one or more [Axes](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes), an area where points can be specified in terms of x-y coordinates (or theta-r in a polar plot, x-y-z in a 3D plot, etc.). The simplest way of creating a Figure with an Axes is using [pyplot.subplots](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots). We can then use [Axes.plot](https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot) to draw some data on the Axes, and [show](https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show) to display the figure:\n![quick start](https://matplotlib.org/stable/_images/sphx_glr_quick_start_001_2_00x.png)\nDepending on the environment you are working in, `plt.show()` can be left out. This is for example the case with Jupyter notebooks, which automatically show all figures created in a code cell.",
+    "documentation_url": "https://matplotlib.org/stable/users/explain/quick_start.html#a-simple-example",
+    "llm_explanation": "General Description: This change creates a simple plot by setting up a figure and axes, plotting data, and displaying the figure.\nReason for the Change: The change was made to demonstrate how to create and display a basic plot in Matplotlib.\nDescription of the Change: The code creates a figure and axes, plots a set of data points, and shows the plot.\nWhat was done in the Change: Added `plt.subplots()`, `ax.plot()` for plotting data, and `plt.show()` to display the plot.\nImportance of the Change: This change is essential as it introduces the basic workflow for creating and visualizing plots using Matplotlib."
+  },
+  {
+    "code": "x = np.linspace(0, 2, 100)\n\nplt.plot(x, x, label='linear')  # Plot some data on the (implicit) Axes.\nplt.plot(x, x**2, label='quadratic')  # etc.\nplt.plot(x, x**3, label='cubic')\n\nplt.xlabel('x label')\nplt.ylabel('y label')\nplt.title('Simple Plot')\nplt.legend()",
+    "language": "python",
+    "documentation": "## Parts of a figure\nThe [Figure](https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure) is the final container that contains all elements of the plot(s). The following script will create a simple plot with three lines and add a legend to distinguish them:\n![quick start](https://matplotlib.org/stable/_images/sphx_glr_quick_start_001_2_00x.png)\nThis script will create the following plot:\n![quick start](https://matplotlib.org/stable/_images/sphx_glr_quick_start_001_3_00x.png)",
+    "documentation_url": "https://matplotlib.org/stable/users/explain/quick_start.html#parts-of-a-figure",
+    "llm_explanation": "General Description: This change creates a simple plot by setting up a figure and axes, plotting data, and displaying the figure.\nReason for the Change: The change was made to demonstrate how to create and display a basic plot in Matplotlib.\nDescription of the Change: The code creates a figure and axes, plots a set of data points, and shows the plot.\nWhat was done in the Change: Added `plt.subplots()`, `ax.plot()` for plotting data, and `plt.show()` to display the plot.\nImportance of the Change: This change is essential as it introduces the basic workflow for creating and visualizing plots using Matplotlib."
+  },
+  {
+    "code": "plt.plot([1, 2, 3, 4], [1, 4, 9, 16])",
+    "language": "python",
+    "documentation": "## Working with multiple figures and axes\n`pyplot` has the concept of the current figure and the current axes. All plotting commands apply to the current axes. The function `gca()` returns the current axes (a `matplotlib.axes.Axes` instance), and `gcf()` returns the current figure (`matplotlib.figure.Figure` instance). Normally, you don't have to worry about this, because it is all taken care of behind the scenes. Below is a script to create two subplots.",
+    "documentation_url": "https://matplotlib.org/stable/users/explain/quick_start.html#working-with-multiple-figures-and-axes",
+    "llm_explanation": "General Description: This change plots a simple set of data points on a graph.\nReason for the Change: The change was made to demonstrate basic plotting functionality using Matplotlib.\nDescription of the Change: The code plots the square of the values from 1 to 4 on the y-axis against their corresponding x-values.\nWhat was done in the Change: Added a `plt.plot()` function call to plot the data points.\nImportance of the Change: This change is important as it introduces the fundamental concept of plotting data points using Matplotlib."
+  },
+  {
+    "code": "plt.plot([1, 2, 3, 4], [1, 4, 9, 16])\nplt.ylabel('some numbers')",
+    "language": "python",
+    "documentation": "## Working with text\nThe `text()` command can be used to add text in an arbitrary location, and the `xlabel()`, `ylabel()` and `title()` are used to add text in the indicated locations (see Text in Matplotlib Plots for a more detailed example)",
+    "documentation_url": "https://matplotlib.org/stable/users/explain/quick_start.html#working-with-text",
+    "llm_explanation": "General Description: This change plots data points and adds a label to the y-axis.\nReason for the Change: The change was made to show how to label the y-axis in a Matplotlib plot.\nDescription of the Change: The code plots data points and uses `plt.ylabel()` to label the y-axis.\nWhat was done in the Change: Added a `plt.plot()` function to plot the data and a `plt.ylabel()` function to label the y-axis.\nImportance of the Change: This change is important as it demonstrates how to enhance plot readability by labeling axes."
+  }
+]

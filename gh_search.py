@@ -8,7 +8,7 @@ tokenizer = AutoTokenizer.from_pretrained('sentence-transformers/all-MiniLM-L6-v
 model = AutoModel.from_pretrained('sentence-transformers/all-MiniLM-L6-v2')
 
 def embedding(text):
-  inputs = tokenizer(text, return_tensors='pt', truncation=True, max_length=512)
+  inputs = tokenizer(text, return_tensors='pt', truncation=True, max_length=384)
   with torch.no_grad():
     vectors = model(**inputs)
   # print(len(vectors.last_hidden_state.mean(dim=1).view(-1).numpy().tolist()))
@@ -29,6 +29,8 @@ client = Client('sqlite', 'explanations.db')
 # insert new code
 script = """
 ?[code, code_embedding, commit_message, llm_explanation] <- """ + str([[new_code['code'], embedding(new_code['code']), new_code['commit_message'], new_code['explanation']]]) + """
+
+:insert gh_explanations
 """
 
 try:
@@ -47,14 +49,13 @@ except Exception as e:
 
 print(res)
 
-script = """
-?[code] := ~gh_explanations:index{ code, code_embedding, commit_message, llm_explanation |
-      query: q,
-      k: 5,
-      ef: 10,
-      radius: 0.5
-  }, q = vec(""" + str(embedding(new_code['code'])) + """)
-"""
+script = '''
+?[dist, code] := 
+    ~gh_explanations:index{code | query: v, bind_distance: dist, k: 10, ef: 50}, v = vec(''' + str(embedding(new_code['code'])) + ''')
+
+:order dist
+:limit 4
+'''
 
 try:
   res = client.run(script)
@@ -62,4 +63,5 @@ except Exception as e:
   print(f"An error occurred: {e}")
 
 print(res)
+
 client.close()

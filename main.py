@@ -17,4 +17,3 @@ import visualization
 print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Visualization Done! Finished in {datetime.datetime.now() - time_relative} seconds.")
 
 print(f"{datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')}: Program execution completed in {datetime.datetime.now() - time_now} seconds.")
-# a = (schema, insert_data, visualization)

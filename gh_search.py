@@ -28,13 +28,13 @@ client = Client('sqlite', 'explanations.db')
 
 # insert new code
 script = """
-?[code, code_embedding, commit_message, llm_explanation] <- """ + str([[new_code['code'], embedding(new_code['code']), new_code['commit_message'], new_code['explanation']]]) + """
+?[code, code_embedding, commit_message, llm_explanation] <- $new_code
 
 :insert gh_explanations
 """
 
 try:
-  res = client.run(script)
+  res = client.run(script, {'new_code': new_code})
 except Exception as e:
   print(f"An error occurred: {e}")
 
@@ -51,14 +51,14 @@ print(res)
 
 script = '''
 ?[dist, code] := 
-    ~gh_explanations:index{code | query: v, bind_distance: dist, k: 10, ef: 50}, v = vec(''' + str(embedding(new_code['code'])) + ''')
+    ~gh_explanations:index{code | query: v, bind_distance: dist, k: 10, ef: 50}, v = vec($embedding)
 
 :order dist
 :limit 4
 '''
 
 try:
-  res = client.run(script)
+  res = client.run(script, {'embedding': str(embedding(new_code['code']))})
 except Exception as e:
   print(f"An error occurred: {e}")
 

@@ -19,7 +19,6 @@ script = """
 
 try:
   res = client.run(script)
-  # print(res)
 except Exception as e:
   print(f"An error occurred: {e}")
 
@@ -38,7 +37,6 @@ script = """
 
 try:
   res = client.run(script)
-  # print(res)
 except Exception as e:
   print(f"An error occurred: {e}")
 
@@ -54,7 +52,6 @@ script = """
 
 try:
   res = client.run(script)
-  # print(res)
 except Exception as e:
   print(f"An error occurred: {e}")
 

@@ -20,18 +20,16 @@ with open('documentation_data.json', 'r') as f:
 
 code_explanation = []
 for i in range(len(code_explanations)):
-  # code_explanation.append([code_explanations[i]['code'], embedding(code_explanations[i]['code']), code_explanations[i]['commit_message'], code_explanations[i]['explanation']])
   code_explanation.append([code_explanations[i]['code'], embedding(code_explanations[i]['code']), code_explanations[i]['language'], code_explanations[i]['documentation'], code_explanations[i]['documentation_url'], code_explanations[i]['llm_explanation']])
 
 script = """
-?[code, code_embedding, language, documentation, documentation_url, llm_explanation] <- """ + str(code_explanation) + """
+?[code, code_embedding, language, documentation, documentation_url, llm_explanation] <- $code_explanation
 
 :insert documentation_explanations
 """
 
 try:
-  res = client.run(script)
-  # print(res)
+  res = client.run(script, {'code_explanation': code_explanation})
 except Exception as e:
   print(f"An error occurred: {e}")
 
@@ -53,14 +51,13 @@ for i in range(len(code_explanations)):
   code_explanation.append([code_explanations[i]['code'], embedding(code_explanations[i]['code']), code_explanations[i]['commit_message'], code_explanations[i]['explanation']])
 
 script = """
-?[code, code_embedding, commit_message, llm_explanation] <- """ + str(code_explanation) + """
+?[code, code_embedding, commit_message, llm_explanation] <- code_explanation
 
 :insert gh_explanations
 """
 
 try:
-  res = client.run(script)
-  # print(res)
+  res = client.run(script, {'code_explanation': code_explanation})
 except Exception as e:
   print(f"An error occurred: {e}")
 

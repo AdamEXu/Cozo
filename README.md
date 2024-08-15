@@ -79,6 +79,3 @@ To search for similar code changes to a given code change, run `search.py`. The 
 python gh_search.py
 python documentation_search.py
 ```
-
-It will also open a visualization of the code change in a separate window with perplexity=5, with the input code change highlighted in red, like the one shown below:
-![A scatter plot containing points for each code change with the input code change highlighted in red.](./readme_images/search_visualization.png)

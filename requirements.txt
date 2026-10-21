@@ -25,7 +25,7 @@ numpy==1.26.4
 openai==1.35.2
 packaging==24.1
 pandas==2.2.2
-pillow==10.4.0
+pillow==13.0.0
 plotly==5.22.0
 pycozo==0.7.6
 pydantic==2.7.4
